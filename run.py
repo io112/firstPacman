@@ -1,8 +1,13 @@
-import pygame
+import sys
+from scenes.field import Field
+
 
 def main():
-    # TODO
-    pass
+    field = Field()
+    field.init_field()
+    field.draw()
+    sys.exit()
+
 
 if __name__ == '__main__':
     main()
