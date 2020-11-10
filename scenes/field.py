@@ -21,15 +21,10 @@ class Field:
                 self.field[h][w] = True
             h, w = 0, 0
 
-        # отзеркаливание от y
-        for i in reversed(range(self.FIELD_HEIGHT)):
-            for j in range(self.FIELD_WEIGHT):
-                self.field[self.FIELD_HEIGHT - i][j] = self.field[i][j]
-
-        # отзеркаливание от x
-        for i in reversed(range(self.FIELD_HEIGHT)):
-            for j in range(self.FIELD_WEIGHT):
-                self.field[j][self.FIELD_WEIGHT - i] = self.field[j][i]
+        # отзеркаливание
+        for i in range(self.FIELD_WEIGHT):
+            for j in range(self.FIELD_HEIGHT):
+                self.field[self.FIELD_HEIGHT - i - 1][self.FIELD_WEIGHT - j - 1] = self.field[i][j]
 
     def update(self):
         pass
