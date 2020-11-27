@@ -298,6 +298,13 @@ def gen_new_map(width, height):
     reversed_bool_matrix.reverse()
     final_bool_matrix = bool_matrix + reversed_bool_matrix
 
+    for y in range(int(height / 2) - 1, int(height / 2) + 1):
+        for x in range(int(width / 2) - box_width + 1, int(width / 2) + box_width - 1):
+            final_bool_matrix[y][x] = False
+
+    final_bool_matrix[int(height / 2) - 2][int(width / 2) - 1] = False
+    final_bool_matrix[int(height / 2) - 2][int(width / 2)] = False
+
     return final_bool_matrix
 
 if __name__ == "__main__":
