@@ -16,22 +16,19 @@ class Menu(Activity):
 
     def inflate_buttons(self):
         # to game button
-        text = self.font.render("Play", True, text_color)
         self.buttons.append(
             Button(pygame.rect.Rect(width // 2, height // 2 - height // 2.2, width // 2, height // 8),
-                   self.to_game, text))
+                   self.to_game, 'scenes/image/play.png'))
 
         # exit button
-        text = self.font.render("Exit", True, text_color)
         self.buttons.append(
             Button(pygame.rect.Rect(width // 2, height // 2, width // 2, height // 8),
-                   Activity.exit_game, text))
+                   Activity.exit_game, 'scenes/image/exit.png'))
 
         # stats button
-        text = self.font.render("Stats", True, text_color)
         self.buttons.append(
             Button(pygame.rect.Rect(width // 2, height // 2 - height // 4.4, width // 2, height // 8),
-                   self.to_stats, text))
+                   self.to_stats, 'scenes/image/stats.png'))
 
     def to_game(self):
         # TODO: переход на field + self.on_deactivate()

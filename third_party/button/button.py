@@ -8,10 +8,11 @@ class Button:
         self.function = what button does after click
     """
 
-    def __init__(self, rect, function, text):
-        self.rect = pygame.Rect(rect)
+    def __init__(self, rect, function, name_of_picture):
+        self.pic = name_of_picture
+        self.pict = pygame.image.load(self.pic)
+        self.rect = self.pict.get_rect()
         self.function = function
-        self.text = text
         self.screen = pygame.display.set_mode(dims)
 
     # checks whether button clicked or not
@@ -23,5 +24,4 @@ class Button:
     def update(self):
         self.screen.fill(black, self.rect)
         self.screen.fill(button_color, self.rect.inflate(-4, -4))
-        text_rect = self.text.get_rect(center=self.rect.center)
-        self.screen.blit(self.text, text_rect)
+        self.screen.blit(self.pict, self.rect)
