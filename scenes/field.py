@@ -66,6 +66,14 @@ class Field:
     def get_tile_world_coords(self, x, y):
         return [(x - 2) * self.CELL_ACTUAL_SIZE, (y - 2) * self.CELL_ACTUAL_SIZE]
 
+    def get_all_seeds_coords(self):
+        rects = []
+        for x in range(2, self.FIELD_HEIGHT):
+            for y in range(2, self.FIELD_WIDTH):
+                if not self.field[x][y]:
+                    rects.append(Rect((x - 2), (y - 2), self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
+        return rects
+
     def check_tile(self, x, y):
         if self.field[int((x + 2) / self.CELL_ACTUAL_SIZE)][int((y + 2) / self.CELL_ACTUAL_SIZE)]:
             return True

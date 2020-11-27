@@ -25,12 +25,10 @@ def main():
     seeds = pygame.sprite.Group()
 
 
-    for x in range(35):
-        for y in range(25):
-            #print(x, y)
-            if not main_field.field[x][y]:
-                seed = Seed(screen, seeds)
-                seed.set_coords(x, y, main_field)
+    for rect in main_field.get_all_seeds_coords():
+        print(rect)
+        seed = Seed(screen, seeds)
+        seed.set_coords(rect.x, rect.y, main_field)
 
     # GAME LOOP
     gameover = False
