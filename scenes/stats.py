@@ -42,8 +42,8 @@ class Stats(Activity):
         # back to menu button
         text = self.font.render('Back', True, text_color)
         self.buttons.append(
-            Button(pygame.rect.Rect(0, 0, height // 8, width // 8),
-                   self.to_menu, text))
+            Button(0,0,
+                   self.to_menu, "scenes/image/exit.png"))
 
     def to_menu(self):
         self.on_deactivate()

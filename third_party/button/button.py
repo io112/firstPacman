@@ -8,10 +8,12 @@ class Button:
         self.function = what button does after click
     """
 
-    def __init__(self, rect, function, name_of_picture):
+    def __init__(self, x, y, function, name_of_picture):
         self.pic = name_of_picture
         self.pict = pygame.image.load(self.pic)
         self.rect = self.pict.get_rect()
+        self.rect.x = x
+        self.rect.y = y
         self.function = function
         self.screen = pygame.display.set_mode(dims)
 
@@ -23,5 +25,4 @@ class Button:
     # update is called every time in a loop
     def update(self):
         self.screen.fill(black, self.rect)
-        self.screen.fill(button_color, self.rect.inflate(-4, -4))
         self.screen.blit(self.pict, self.rect)
