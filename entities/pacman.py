@@ -1,6 +1,7 @@
 import pygame
 
 from entities.MovingObject import movingObject
+from constants import *
 
 class Pacman(movingObject):
 
@@ -15,6 +16,7 @@ class Pacman(movingObject):
         self.cur_move_sprite = pygame.image.load("images/pacman_circle.png")
         self.clock = pygame.time.Clock()
         self.time = 0
+        self.sc = 0    # Пока будем дублировать score в пакмана
 
     def set_movement(self, move_status, direction = 'not change'):
 
@@ -61,7 +63,7 @@ class Pacman(movingObject):
                 self.cur_move_sprite = pygame.image.load("images/pacman_down.png")
 
 
-    def logic(self, *all_obj):
+    def logic(self, *all_obj, field, score):
 
         st = self.collision(*all_obj)
         list_of_all_object_groups = list(all_obj)
@@ -90,9 +92,7 @@ class Pacman(movingObject):
                 #self.rect.y -= 1
 
         else:
-            self.speed = {'speed_l': -self.conspeed, 'speed_r': self.conspeed, 'speed_u': -self.conspeed, 'speed_d': self.conspeed}
-
-
+            self.set_speed(self.conspeed)
 
         # Просто ест семена всех типов, для начисление балов или эфектов будем проверять коллизию пакмана с семенем в классе семян.
         #pygame.sprite.spritecollide(self, list_of_all_object_groups[1], True)
@@ -101,6 +101,16 @@ class Pacman(movingObject):
         for seed in list_of_all_object_groups[1]:
             if (pygame.sprite.collide_mask(self, seed)):
                 list_of_all_object_groups[1].remove(seed)
+                self.earn_points(score, seed)
+
+
+        if (len(st[1]) != 0):
+            self.rect.x = pac_spawnx
+            self.rect.y = pac_spawny
+            self.hp -= 1
+
+
+        # Невозможность повернуть в стену
 
 
 
@@ -141,8 +151,14 @@ class Pacman(movingObject):
                 self.set_movement(True, 'down')
 
 
+    def earn_points(self, cur_score, seed):
+        self.sc = cur_score + seed.weight
 
-    def update(self, *args, event):
+    def update(self, event_field_score, *args):
+
+        event = event_field_score[0]
+        field = event_field_score[1]
+        #score = event_field_score[2]
 
         if(event != None):
             self.check_events(event)
@@ -151,4 +167,10 @@ class Pacman(movingObject):
             self.move()
 
         self.change()
-        self.logic(*args)
+        self.logic(*args, field=field, score=event_field_score[2])
+
+        #print(self.hp)
+        if (self.hp <= 0):
+            return True
+
+        return False

@@ -12,6 +12,12 @@ class movingObject(Object):
         self.move_dir = 'none'
         self.prev_move_dir = 'none'
         self.is_moving = False
+        self.last_loc_cell = 'none'
+        self.colliding = False
+
+    def set_speed(self, speed):
+        self.conspeed = speed
+        self.speed = {'speed_l': -self.conspeed, 'speed_r': self.conspeed, 'speed_u': -self.conspeed, 'speed_d': self.conspeed}
 
     def set_movement(self, move_status, direction = 'not change'):
 
@@ -65,24 +71,30 @@ class movingObject(Object):
 
             if ((self.rect.x + self.rect.width - self.speed['speed_r'] <= wall.x and self.rect.x + self.rect.width >= wall.x) and (self.rect.y + self.rect.height >= wall.y and self.rect.y <= wall.y + wall.height)):
                print('left')
+               self.colliding = True
                return 'left'
 
             elif ((self.rect.x - self.speed['speed_l'] >= wall.x + wall.width and self.rect.x <= wall.x + wall.width) and (self.rect.y + self.rect.height >= wall.y and self.rect.y <= wall.y + wall.height)):
                print('right')
+               self.colliding = True
                return 'right'
 
-            elif ((self.rect.y + self.rect.height - self.speed['speed_d'] <= wall.y and self.rect.y + self.rect.height >= wall.y)and (self.rect.x + self.rect.width >= wall.x and self.rect.x <= wall.x + wall.width)):
+            elif ((self.rect.y + self.rect.height - self.speed['speed_d'] <= wall.y and self.rect.y + self.rect.height >= wall.y) and (self.rect.x + self.rect.width >= wall.x and self.rect.x <= wall.x + wall.width)):
                print('bottom')
+               self.colliding = True
                return 'bottom'
 
             elif ((self.rect.y - self.speed['speed_u'] >= wall.y + wall.height and self.rect.y <= wall.y + wall.height) and (self.rect.x + self.rect.width >= wall.x and self.rect.x <= wall.x + wall.width)):
                print('top')
+               self.colliding = True
                return 'top'
+            else:
+                self.colliding = False
 
         return False
 
 
-    def teleport(self, tp_zones = 0):
+    def teleport(self):
 
         if (self.rect.x + self.rect.width <= 0):
             self.rect.x = screen_height
@@ -96,28 +108,48 @@ class movingObject(Object):
         elif (self.rect.y > screen_width):
             self.rect.y = -self.rect.height
 
-        # Пока не готово, обрабатывет телепортацию от вверхнего и нижнего края, т.к поле симметрично только по оси y
-        # уже не нужно, но мало ли
+
+    def check_nearby_wall(self, all_walls, dist = 2):
         '''
-        if ((self.rect.y >= screen_height) or (self.rect.y - self.rect.height <= 0)):
-             
-            randzone = 'none'
-                
-            for zone in tp_zones:
-                
-                if ((zone[0][0] <= self.rect.x <= zone[0][1] - self.rect.width):
-                    
-                    while (True):
-                    
-                        randzone = tp_zones[random.randint(0, len(tp_zones) - 1)]
-                    
-                        if (randzone[1] != self.rect.y):
-                            
-                            self.rect.x = randzone[0][0] + (self.rect.x - zone[0][0])
-                            self.rect.y = randzone[1]
-                            break          
+        check_wall_d = [self.rect.x + self.rect.width // 2, self.rect.y + self.rect.height + dist]
+        check_wall_u = [self.rect.x + self.rect.width // 2, self.rect.y - dist]
+        check_wall_r = [self.rect.x + self.rect.width + dist, self.rect.y + self.rect.height // 2]
+        check_wall_l = [self.rect.x - dist, self.rect.y + self.rect.height // 2]
+
+        direct = [False, False, False, False]
+
+        for wall in all_walls:
+            if (wall.collidepoint(check_wall_l)):
+                direct[0] = True
+
+            if (wall.collidepoint(check_wall_r)):
+                direct[1] = True
+
+            if (wall.collidepoint(check_wall_u)):
+                direct[2] = True
+
+            if (wall.collidepoint(check_wall_d)):
+                direct[3] = True
+
+        return direct
         '''
 
+        direct = [False, False, False, False]
+
+        cur_cell_i = self.get_loc_cell()[0]
+        cur_cell_j = self.get_loc_cell()[1]
+
+        if (all_walls[cur_cell_i][cur_cell_j - 1]):
+            direct[0] = True
+        if (all_walls[cur_cell_i][cur_cell_j + 1]):
+            direct[1] = True
+        if (all_walls[cur_cell_i - 1][cur_cell_j]):
+            direct[2] = True
+        if (all_walls[cur_cell_i + 1][cur_cell_j]):
+            direct[3] = True
+
+        print(direct)
+        return direct
 
     def collision(self, *obj):
 
@@ -129,9 +161,12 @@ class movingObject(Object):
         
         self.teleport()
 
+        #self.check_nearby_wall(list_of_all_object_groups[0])
+
         # ни че не тестил, чисто в теории
-        '''
-        ghost_mas = list_of_all_object_groups[3].sprites()
+        self.mask = pygame.mask.from_surface(self.image)
+
+        ghost_mas = list_of_all_object_groups[2].sprites()
         coll_ghost = []
 
         for ind in range(len(ghost_mas)):
@@ -139,14 +174,21 @@ class movingObject(Object):
                 coll_ghost.append(ind)
 
 
-        colcopac = list(pygame.sprite.collide_mask(list_of_all_object_groups[4], self))  # Координаты коллизии с пакманом
-        coll_pacman = [self.rect.x + colcopac[0], self.rect.y + colcopac[1]]
-        '''
+        #colcopac = list(pygame.sprite.collide_mask(list_of_all_object_groups[3], self))  # Координаты коллизии с пакманом
+        #coll_pacman = [self.rect.x + colcopac[0], self.rect.y + colcopac[1]]
 
+        status = [coll_wall, coll_ghost]
         #status = [coll_wall, coll_ghost, coll_pacman]
-        status = [coll_wall]
 
         return status
+
+
+    def get_loc_cell(self):
+
+        x = self.rect.x // cell_size
+        y = self.rect.y // cell_size
+
+        return [x, y]
 
 
     def draw(self, screen, x, y, s):
@@ -154,3 +196,4 @@ class movingObject(Object):
         self.rect.x = x
         self.rect.y = y
         self.conspeed = s
+        self.last_loc_cell = self.get_loc_cell()
