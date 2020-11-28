@@ -1,11 +1,13 @@
 import sys
-from scenes.field import Field
+import pygame
+from game import Game
 
 
 def main():
-    field = Field()
-    field.init_field()
-    field.draw()
+    pygame.init()
+    pygame.font.init()
+    game = Game()
+    game.activity_manager()
     sys.exit()
 
 
