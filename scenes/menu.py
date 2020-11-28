@@ -51,7 +51,6 @@ class Menu(Activity):
         player = pygame.sprite.Group()
         player.add(pacman)
 
-
         blue_ghost = Pinky(pygame.image.load("images/blue_ghost.png"))
         green_ghost = Pinky(pygame.image.load("images/green_ghost.png"))
         purple_ghost = Pinky(pygame.image.load("images/purple_ghost.png"))
@@ -81,6 +80,7 @@ class Menu(Activity):
 
         seeds = pygame.sprite.Group()
 
+        font = pygame.font.Font('images/Comfortaa-SemiBold.ttf', 18)
 
         for rect in main_field.get_all_seeds_coords():
             #print(rect)
@@ -104,7 +104,10 @@ class Menu(Activity):
             #print(pacman.rect.x , pacman.rect.y)
             #print(screen_width)
 
-            print(score)
+            text = font.render(str(score), True, (255, 46, 66))
+            textRect = text.get_rect()
+            textRect.x = 8
+            textRect.y = 8
 
             # Если hp == 0 пакман, сразу завершаем игру (или вызываем обработку конца, имеется ввиду обновление списка рекордов
             gameover = pacman.update([None, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts, pacman)
@@ -122,6 +125,9 @@ class Menu(Activity):
             seeds.draw(screen)
             player.draw(screen)
             ghosts.draw(screen)
+
+            screen.blit(text, textRect)
+
             pygame.display.flip()
             pygame.time.wait(10)        
 
