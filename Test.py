@@ -30,19 +30,19 @@ def main():
 
 
     blue_ghost = Pinky(pygame.image.load("images/blue_ghost.png"))
-    green_ghost = Pinky(pygame.image.load("images/green_ghost.png"))
+    orange_ghost = Pinky(pygame.image.load("images/orange_ghost.png"))
     purple_ghost = Pinky(pygame.image.load("images/purple_ghost.png"))
     red_ghost = Pinky(pygame.image.load("images/red_ghost.png"))
     blue_ghost.draw(screen, blue_spawnx, blue_spawny, 1)
-    green_ghost.draw(screen, green_spawnx, green_spawny, 1)
+    orange_ghost.draw(screen, green_spawnx, green_spawny, 1)
     purple_ghost.draw(screen, purple_spawnx, purple_spawny, 1)
     red_ghost.draw(screen, red_spawnx, red_spawnx, 1)
 
     blue_ghost.set_movement(True, 'right')
     blue_ghost.set_speed(4)
 
-    green_ghost.set_movement(True, 'left')
-    green_ghost.set_speed(4)
+    orange_ghost.set_movement(True, 'left')
+    orange_ghost.set_speed(4)
 
     blue_ghost.set_movement(True, 'down')
     blue_ghost.set_speed(4)
@@ -52,13 +52,12 @@ def main():
 
     ghosts = pygame.sprite.Group()
     ghosts.add(blue_ghost)
-    ghosts.add(green_ghost)
+    ghosts.add(orange_ghost)
     ghosts.add(purple_ghost)
     ghosts.add(red_ghost)
 
     seeds = pygame.sprite.Group()
 
-    font = pygame.font.Font('images/Comfortaa-Bold.ttf', 18)
 
     for rect in main_field.get_all_seeds_coords():
         #print(rect)
@@ -82,10 +81,7 @@ def main():
         #print(pacman.rect.x , pacman.rect.y)
         #print(screen_width)
 
-        text = font.render(str(score), True, (255, 46, 66))
-        textRect = text.get_rect()
-        textRect.x = screen_width - textRect.width - 8
-        textRect.y = screen_height - textRect.height - 8
+        print(score)
 
         # UPDATE
         main_field.update()
@@ -96,7 +92,7 @@ def main():
         
         blue_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
         red_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-        green_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
+        orange_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
         purple_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
 
         # DRAW
@@ -106,10 +102,6 @@ def main():
         seeds.draw(screen)
         player.draw(screen)
         ghosts.draw(screen)
-
-        # DRAW SCORE
-        screen.blit(text, textRect)
-
         pygame.display.flip()
         pygame.time.wait(10)
     sys.exit()
