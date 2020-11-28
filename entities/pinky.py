@@ -90,7 +90,7 @@ class Pinky(movingObject):
             print('now')
             self.action(field.field)
             self.last_loc_cell = self.get_loc_cell()
-        elif (random.randint(0, 100) <= 5):
+        elif (pygame.time.get_ticks() % 50 == 0):
             print('now')
             self.action(field.field)
             self.last_loc_cell = self.get_loc_cell()
@@ -118,8 +118,6 @@ class Pinky(movingObject):
                     self.mode = 'collide'
 
                 self.time = 0
-
-
 
     def update(self, field, *args):
 
