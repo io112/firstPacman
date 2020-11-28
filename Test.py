@@ -58,7 +58,7 @@ def main():
 
     seeds = pygame.sprite.Group()
 
-    font = pygame.font.Font('images/Comfortaa-Bold.ttf', 16)
+    font = pygame.font.Font('images/Comfortaa-Bold.ttf', 18)
 
     for rect in main_field.get_all_seeds_coords():
         #print(rect)
@@ -82,8 +82,10 @@ def main():
         #print(pacman.rect.x , pacman.rect.y)
         #print(screen_width)
 
-        text = font.render(str(score), True, (0, 0, 0))
+        text = font.render(str(score), True, (255, 46, 66))
         textRect = text.get_rect()
+        textRect.x = screen_width - textRect.width - 8
+        textRect.y = screen_height - textRect.height - 8
 
         # UPDATE
         main_field.update()

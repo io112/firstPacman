@@ -12,7 +12,7 @@ class Pinky(movingObject):
         self.mode = 'collide'
         self.change_sprite = -1
         self.is_moving = False
-        self.cur_move_sprite = pygame.image.load("images/purple_ghost.png")
+        self.cur_move_sprite = texture
         self.change_mod_timer = True
         self.clock = pygame.time.Clock()
         self.time = 0
