@@ -29,13 +29,13 @@ class Stats(Activity):
 
     def draw_records(self):
         for i in range(len(self.records)):
-            pygame.draw.rect(self.screen, button_color, (width // 2, i * 40 + 10, 100, 40), 2)
+            pygame.draw.rect(self.screen, button_color, (width // 2 + 70, i * 40 + 10 + 70, 100, 40), 2)
             text = self.font.render(str(i + 1), True, text_color)
-            text_rect = text.get_rect(center=(width // 2 + width // 13, i * 40 + 20 + 10))
+            text_rect = text.get_rect(center=(width // 2 + width // 13 + 70, i * 40 + 20 + 10 + 70))
             self.screen.blit(text, text_rect)
-            pygame.draw.rect(self.screen, button_color, (width // 2 + 100, i * 40 + 10, 100, 40), 2)
+            pygame.draw.rect(self.screen, button_color, (width // 2 + 100 + 70, i * 40 + 10 + 70, 100, 40), 2)
             text = self.font.render(str(self.records[i]), True, text_color)
-            text_rect = text.get_rect(center=(width // 2 + 100 + width // 13, i * 40 + 20 + 10))
+            text_rect = text.get_rect(center=(width // 2 + 100 + width // 13 + 70, i * 40 + 20 + 10 + 70))
             self.screen.blit(text, text_rect)
 
     def inflate_buttons(self):
