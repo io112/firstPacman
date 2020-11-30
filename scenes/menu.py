@@ -11,6 +11,7 @@ from scenes.seeds.objects.Fruit import *
 from entities.pacman import Pacman
 from entities.pinky import Pinky
 
+
 class Menu(Activity):
     def __init__(self, game):
         super(Menu, self).__init__(game)
@@ -33,9 +34,9 @@ class Menu(Activity):
         # stats button
         self.buttons.append(
             Button(380, 420, self.to_stats, 'scenes/image/stats.png'))
-        
+
         self.buttons.append(
-            Button(376, 230, self.on_logo,'scenes/image/logo.png'))
+            Button(376, 230, self.on_logo, 'scenes/image/logo.png'))
 
     def to_game(self):
         score = 0
@@ -83,7 +84,7 @@ class Menu(Activity):
         font = pygame.font.Font('images/Comfortaa-SemiBold.ttf', 18)
 
         for rect in main_field.get_all_seeds_coords():
-            #print(rect)
+            # print(rect)
             seed = Seed(screen, seeds)
             seed.set_coords(rect.x, rect.y, main_field)
 
@@ -101,8 +102,8 @@ class Menu(Activity):
 
             # block init_seeds_field started
 
-            #print(pacman.rect.x , pacman.rect.y)
-            #print(screen_width)
+            # print(pacman.rect.x , pacman.rect.y)
+            # print(screen_width)
 
             text = font.render(str(score), True, (255, 46, 66))
             textRect = text.get_rect()
@@ -130,6 +131,10 @@ class Menu(Activity):
 
             pygame.display.flip()
             pygame.time.wait(10)        
+
+        with open('records.txt', 'a') as f:
+            f.write(str(score))
+            f.write(str('\n'))
 
     def on_logo(self):
         # TODO: Пасхалка
