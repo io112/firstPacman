@@ -1,4 +1,4 @@
-screen_dims = screen_height, screen_width = 1024, 704 #size = width, height = 1024, 704
+screen_dims = screen_height, screen_width = 1024, 704 # size = width, height = 1024, 704
 field_height, field_width = 26, 36
 bg_col = 41, 41, 41
 pac_spawnx, pac_spawny= 490, 500
