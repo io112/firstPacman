@@ -1,3 +1,4 @@
+records.txt
 
 # Created by https://www.toptal.com/developers/gitignore/api/pycharm,python,macos,linux,vscode
 # Edit at https://www.toptal.com/developers/gitignore?templates=pycharm,python,macos,linux,vscode
@@ -298,3 +299,4 @@ dmypy.json
 *.code-workspace
 
 # End of https://www.toptal.com/developers/gitignore/api/pycharm,python,macos,linux,vscode
+/.idea/
