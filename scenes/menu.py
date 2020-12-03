@@ -62,7 +62,13 @@ class Menu(Activity):
         ghosts = []
 
         clyde_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
+        inky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
+        pinky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
+        blinky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
         ghosts.append(clyde_ghost)
+        ghosts.append(inky_ghost)
+        ghosts.append(pinky_ghost)
+        ghosts.append(blinky_ghost)
         print(ghosts)
 
         seeds = pygame.sprite.Group()
@@ -83,12 +89,11 @@ class Menu(Activity):
 
         # GAME LOOP
         gameover = False
-        gameover_by_button = False
-        while not gameover_by_button and not gameover:
+        while not gameover and not pacman.dead:
             events = pygame.event.get()
             for event in events:
                 if event.type == pygame.QUIT:
-                    gameover_by_button = True
+                    gameover = True
 
             text = font.render(str(score), True, (255, 46, 66))
             textRect = text.get_rect()
@@ -105,15 +110,19 @@ class Menu(Activity):
                 fruit_added = True
 
             # UPDATE
-            pacman.update(field=main_field, events=events)
-            clyde_ghost.update(field=main_field)
+            pacman.update(seeds=seeds, ghosts=ghosts, field=main_field, events=events)
+            score = pacman.score
+
+            for ghost in ghosts:
+                ghost.update(field=main_field, pacman=pacman)
 
             # DRAW
             screen.fill(bg_col)
 
             main_field.draw(screen)
             seeds.draw(screen)
-            clyde_ghost.draw(screen)
+            for ghost in ghosts:
+                ghost.draw(screen)
             pacman.draw(screen)
 
             screen.blit(text, textRect)

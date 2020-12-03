@@ -1,4 +1,5 @@
 from pygame import Vector2
+import pygame
 from firstpacman.constants import *
 
 class movingObject():
@@ -25,7 +26,7 @@ class movingObject():
         # Телепортация по краям карты
         self.check_if_out_of_screen()
 
-        # Синхронизация положения спрайта и тела
+        # Синхронизация положения объекта и тела
         self.rect.x = self.position.x
         self.rect.y = self.position.y
 
@@ -95,5 +96,18 @@ class movingObject():
 
         return collides_with
 
+    def get_center(self):
+        return Vector2(self.position.x + int(self.rect.width / 2), self.position.y + int(self.rect.height / 2))
+
     def draw(self, screen):
         screen.blit(self.texture, (self.position.x, self.position.y))
+
+        if DEBUG_MODE:
+            self.draw_hitbox(screen)
+            self.draw_velocity_vector(screen)
+
+    def draw_hitbox(self, screen):
+        pygame.draw.rect(screen, HITBOX_COLOR, self.rect, 1)
+
+    def draw_velocity_vector(self, screen):
+        pygame.draw.line(screen, VELOCITY_COLOR, self.get_center(), self.get_center() + self.velocity * VELOCITY_SCALE, 2)

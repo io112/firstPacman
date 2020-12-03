@@ -15,13 +15,50 @@ class Pacman(movingObject):
         self.time = 0
         self.change_sprite = -1
 
-    def update(self, field, events):
-        self.update_movement(events)
+        self.dead = False
+        self.score = 0
+        self.hp = 3
 
+    def update(self, seeds, ghosts, field, events):
+        # Движение
+        self.update_movement(events)
         self.update_texture_timer()
 
+        # Коллизии со специальными объектами и их обработка
+        self.seeds_interact(seeds)
+        self.ghosts_interact(ghosts)
+
+        # Вызвать базовый update, который проверяет коллизии со стенами и все остальное
         super().update(field)
 
+    # Семена
+    def seeds_interact(self, seeds):
+        # Просто ест семена всех типов, для начисление балов или эфектов будем проверять коллизию пакмана с семенем в
+        # классе семян. pygame.sprite.spritecollide(self, list_of_all_object_groups[1], True) на всякий случай
+        self.mask = pygame.mask.from_surface(self.texture)
+        for seed in seeds:
+            if pygame.sprite.collide_mask(self, seed):
+                seeds.remove(seed)
+                self.earn_points(seed)
+
+    # Призраки
+    def ghosts_interact(self, ghosts):
+        colliding = self.check_ghosts_collision(ghosts)
+        if colliding:
+            self.die()
+
+    def check_ghosts_collision(self, ghosts):
+        for ghost in ghosts:
+            # Я нашел это в интернете, но оно работает
+            ghost_mask = pygame.mask.from_surface(ghost.texture)
+            offset_x = int(ghost.position.x - self.position.x)
+            offset_y = int(ghost.position.y - self.position.y)
+            if self.mask.overlap(ghost_mask, (offset_x, offset_y)):
+                return True
+
+        return False
+
+    # Движение
     def update_movement(self, events):
         # Обновить вектор направления движения
         for event in events:
@@ -76,18 +113,28 @@ class Pacman(movingObject):
     def update_texture(self):
         if (self.move_direction.x > 0):
             self.texture = pygame.image.load("images/pacman_right.png")
+            # Обновить маску, так как мы поменяли текстурку
+            self.mask = pygame.mask.from_surface(self.texture)
 
         elif (self.move_direction.x < 0):
             self.texture = pygame.image.load("images/pacman_left.png")
+            # Обновить маску, так как мы поменяли текстурку
+            self.mask = pygame.mask.from_surface(self.texture)
 
         elif (self.move_direction.y > 0):
             self.texture = pygame.image.load("images/pacman_down.png")
+            # Обновить маску, так как мы поменяли текстурку
+            self.mask = pygame.mask.from_surface(self.texture)
 
         elif (self.move_direction.y < 0):
             self.texture = pygame.image.load("images/pacman_top.png")
+            # Обновить маску, так как мы поменяли текстурку
+            self.mask = pygame.mask.from_surface(self.texture)
 
         else:
             self.texture = pygame.image.load("images/pacman_circle.png")
+            # Обновить маску, так как мы поменяли текстурку
+            self.mask = pygame.mask.from_surface(self.texture)
 
     def update_texture_timer(self):
         if self.open_havalka_timer:
@@ -96,12 +143,28 @@ class Pacman(movingObject):
             if self.time > 300:
                 if self.change_sprite > 0:
                     self.texture = pygame.image.load("images/pacman_circle.png")
+                    # Обновить маску, так как мы поменяли текстурку
+                    self.mask = pygame.mask.from_surface(self.texture)
 
                 elif self.change_sprite < 0:
                     self.update_texture()
 
                 self.change_sprite *= -1
                 self.time = 0
+
+    # Вспомогательные
+    def die(self):
+        self.position = Vector2(pac_spawnx, pac_spawny)
+        self.hp -= 1
+
+        # Если у пакмана 0 жизней, то он мертв (логично)
+        if self.hp <= 0:
+            self.dead = True
+
+    def earn_points(self, seed):
+        # self.eatfruit_sound.play()
+        self.score = self.score + seed.weight
+
 
     def draw(self, screen):
         super().draw(screen)

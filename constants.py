@@ -17,3 +17,8 @@ cell_size = 32
 pinky_range = 40
 BLACK = 0, 0, 0
 WHITE = 255, 255, 255
+
+DEBUG_MODE = False
+VELOCITY_SCALE = 16
+VELOCITY_COLOR = (0, 0, 255)
+HITBOX_COLOR = (0, 255, 0)
