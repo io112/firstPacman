@@ -1,16 +1,26 @@
-from third_party.button.button import Button
-from scenes.activity import Activity
-from constants import *
+#region Imports
+# Основы
 import pygame
-import sys
-from constants import *
-from scenes.field import Field
-from scenes.seeds.objects.Seed import *
-from scenes.seeds.objects.BigSeed import *
-from scenes.seeds.objects.Fruit import *
-from entities.pacman import Pacman
-from entities.pinky import Pinky
+from pygame import Vector2
+from firstpacman.constants import *
 
+# Меню
+from firstpacman.third_party.button.button import Button
+from firstpacman.scenes.activity import Activity
+
+# Поле
+from firstpacman.scenes.field import Field
+
+# Семена
+from firstpacman.scenes.seeds.objects.seed import *
+from firstpacman.scenes.seeds.objects.bigSeed import *
+from firstpacman.scenes.seeds.objects.fruit import *
+
+# Энтити
+from firstpacman.entities.pacman import Pacman
+from firstpacman.entities.ghosts.clydeGhost import Clyde
+from firstpacman.entities.ghosts.ghostBase import GhostBase
+#endregion
 
 class Menu(Activity):
     def __init__(self, game):
@@ -43,89 +53,49 @@ class Menu(Activity):
         screen = pygame.display.set_mode(screen_dims)
 
         # INIT
-        main_field = Field()
+        main_field = Field(screen)
         main_field.init_field()
         # print(main_field.get_all_wall_rects())
 
-        pacman = Pacman()
-        pacman.draw(screen, pac_spawnx, pac_spawny, 2)
-        player = pygame.sprite.Group()
-        player.add(pacman)
+        pacman = Pacman(speed=2, position=Vector2(pac_spawnx, pac_spawny))
 
-        blue_ghost = Pinky(pygame.image.load("images/blue_ghost.png"))
-        green_ghost = Pinky(pygame.image.load("images/green_ghost.png"))
-        purple_ghost = Pinky(pygame.image.load("images/purple_ghost.png"))
-        red_ghost = Pinky(pygame.image.load("images/red_ghost.png"))
-        blue_ghost.draw(screen, blue_spawnx, blue_spawny, 1)
-        green_ghost.draw(screen, green_spawnx, green_spawny, 1)
-        purple_ghost.draw(screen, purple_spawnx, purple_spawny, 1)
-        red_ghost.draw(screen, red_spawnx, red_spawnx, 1)
+        ghosts = []
 
-        blue_ghost.set_movement(True, 'right')
-        blue_ghost.set_speed(4)
-
-        green_ghost.set_movement(True, 'left')
-        green_ghost.set_speed(4)
-
-        blue_ghost.set_movement(True, 'down')
-        blue_ghost.set_speed(4)
-
-        red_ghost.set_movement(True, 'up')
-        red_ghost.set_speed(4)
-
-        ghosts = pygame.sprite.Group()
-        ghosts.add(blue_ghost)
-        ghosts.add(green_ghost)
-        ghosts.add(purple_ghost)
-        ghosts.add(red_ghost)
+        clyde_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
+        ghosts.append(clyde_ghost)
+        print(ghosts)
 
         seeds = pygame.sprite.Group()
         fruit_added = False
 
         font = pygame.font.Font('images/Comfortaa-SemiBold.ttf', 18)
 
+        # Генерация семян
         for rect in main_field.get_all_seeds_coords():  # генерация зерен
             # print(rect)
             seed = Seed(screen, seeds)
             seed.set_coords(rect.x, rect.y, main_field)
-
         for seed in range(4):  # генерация особых зерен
             rnd_seed = random.choice(seeds.sprites())
             b_seed = BigSeed(screen, seeds)
             b_seed.reset_coords(rnd_seed)
             rnd_seed.kill()
 
-        # rnd_seed = random.choice(seeds.sprites()) #генерация фрукта при старте
-        # fruit = Fruit(screen, seeds)
-        # fruit.reset_coords(rnd_seed)
-        # rnd_seed.kill()
-
         # GAME LOOP
         gameover = False
         gameover_by_button = False
-
         while not gameover_by_button and not gameover:
-            for event in pygame.event.get():
-
-                gameover = pacman.update([event, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts,
-                                         pacman)
-
+            events = pygame.event.get()
+            for event in events:
                 if event.type == pygame.QUIT:
                     gameover_by_button = True
-
-            # block init_seeds_field started
-
-            # print(pacman.rect.x , pacman.rect.y)
-            # print(screen_width)
 
             text = font.render(str(score), True, (255, 46, 66))
             textRect = text.get_rect()
             textRect.x = 8
             textRect.y = 8
 
-            # Если hp == 0 пакман, сразу завершаем игру (или вызываем обработку конца, имеется ввиду обновление списка рекордов
-            gameover = pacman.update([None, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-            score = pacman.sc  # В python как то геморно передовать переменную по ссылке, поэтому в пакмане хранится счет
+            score = 0
 
             if score >= 100 and not fruit_added:  # генерация фрукта при достижении очков
                 rnd_seed = random.choice(seeds.sprites())
@@ -134,18 +104,17 @@ class Menu(Activity):
                 rnd_seed.kill()
                 fruit_added = True
 
-            blue_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-            red_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-            green_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-            purple_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
+            # UPDATE
+            pacman.update(field=main_field, events=events)
+            clyde_ghost.update(field=main_field)
 
             # DRAW
             screen.fill(bg_col)
 
             main_field.draw(screen)
             seeds.draw(screen)
-            player.draw(screen)
-            ghosts.draw(screen)
+            clyde_ghost.draw(screen)
+            pacman.draw(screen)
 
             screen.blit(text, textRect)
 

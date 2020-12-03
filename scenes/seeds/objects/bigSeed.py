@@ -1,5 +1,5 @@
 import random, pygame
-from scenes.seeds.objects.Seed import Seed
+from firstpacman.scenes.seeds.objects.seed import Seed
 
 big_seed = pygame.image.load("images/big_seed.png")
 

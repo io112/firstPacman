@@ -1,5 +1,5 @@
 import random, pygame
-from scenes.seeds.objects.Seed import Seed
+from firstpacman.scenes.seeds.objects.seed import Seed
 
 fruit = pygame.image.load("images/fruit.png")  # еще нет иллюстрации
 

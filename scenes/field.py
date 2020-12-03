@@ -3,7 +3,7 @@ from scenes.walls import *
 from pygame import Rect
 
 class Field:
-    def __init__(self):
+    def __init__(self, screen):
         self.FIELD_HEIGHT = 36  # ACTUALLY WIDTH 36
         self.FIELD_WIDTH = 26   # ACTUALLY HEIGHT 26
         self.CELL_SIZE = 8
@@ -11,6 +11,7 @@ class Field:
         self.CELL_ACTUAL_SIZE = self.CELL_SIZE * self.CELL_SCALE
         self.tileset_image = pygame.image.load("images/tileset.png").convert()
         self.tileset_rect = self.tileset_image.get_rect()
+        self.screen = screen
 
         self.tile_table = []
         for tile_x in range(0, round(self.tileset_rect.width / self.CELL_SIZE)):
@@ -101,12 +102,16 @@ class Field:
                     texture = pygame.transform.scale(texture, (self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
                     screen.blit(texture, (pos_x, pos_y, self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
 
-        # self.draw_hitboxes(screen)
+        self.draw_hitboxes(screen)
 
     def draw_hitboxes(self, screen):
         rects = self.get_all_wall_rects()
         for rect in rects:
-            pygame.draw.rect(screen, (255, 0, 0), rect, 1)
+            pygame.draw.rect(self.screen, (255, 0, 0), rect, 1)
+
+    def draw_rects(self, rects):
+        for rect in rects:
+            pygame.draw.rect(self.screen, (255, 0, 0), rect, 1)
 
     def get_tile(self, x, y):
 

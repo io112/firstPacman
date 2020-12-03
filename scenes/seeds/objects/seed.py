@@ -1,6 +1,6 @@
 import random, pygame
-from scenes.seeds.objects.Object import Object
-from scenes.field import *
+from firstpacman.scenes.seeds.objects.object import Object
+from firstpacman.scenes.field import *
 
 
 basic_seed = pygame.image.load("images/basic_seed.png")

@@ -1,176 +1,107 @@
 import pygame
 
-from entities.MovingObject import movingObject
-from constants import *
+from firstpacman.entities.movingObject import movingObject
+from firstpacman.constants import *
+
+from pygame import Vector2
 
 class Pacman(movingObject):
+    def __init__(self, speed, position):
+        super().__init__(texture=pygame.image.load("images/pacman_circle.png"), speed=speed, position=position)
+        self.move_direction = Vector2()
 
-    def __init__(self):
-        super().__init__(pygame.image.load("images/pacman_circle.png"))
-
-        self.type = 'pacman'
-        self.hp = 3
-        self.change_sprite = -1
-        self.is_moving = False
-        self.open_havalka_timer = False
-        self.cur_move_sprite = pygame.image.load("images/pacman_circle.png")
         self.clock = pygame.time.Clock()
+        self.open_havalka_timer = True
         self.time = 0
-        self.sc = 0    # Пока будем дублировать score в пакмана
+        self.change_sprite = -1
 
-    def set_movement(self, move_status, direction = 'not change'):
+    def update(self, field, events):
+        self.update_movement(events)
 
-        self.is_moving = move_status
-        if (direction != 'not change'):
-            self.move_dir = direction
+        self.update_texture_timer()
 
-        if (self.move_dir != self.prev_move_dir):
-            self.prev_move_dir = self.move_dir
-            #print('change')
-            self.time = 300
+        super().update(field)
 
-        if (self.is_moving):
-            self.open_havalka_timer = True
+    def update_movement(self, events):
+        # Обновить вектор направления движения
+        for event in events:
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_LEFT:
+                    self.move_direction.x -= 1
+                    print('[MOVING] Left')
+
+                if event.key == pygame.K_RIGHT:
+                    self.move_direction.x += 1
+                    print('[MOVING] Right')
+
+                if event.key == pygame.K_UP:
+                    self.move_direction.y -= 1
+                    print('[MOVING] Up')
+
+                if event.key == pygame.K_DOWN:
+                    self.move_direction.y += 1
+                    print('[MOVING] Down')
+
+                # Обновить текстурку с новым направлением движения
+                self.update_texture()
+
+            if event.type == pygame.KEYUP:
+                if event.key == pygame.K_LEFT:
+                    self.move_direction.x += 1
+                    print('[MOVING] Stopping Left')
+
+                if event.key == pygame.K_RIGHT:
+                    self.move_direction.x -= 1
+                    print('[MOVING] Stopping Right')
+
+                if event.key == pygame.K_UP:
+                    self.move_direction.y += 1
+                    print('[MOVING] Stopping Up')
+
+                if event.key == pygame.K_DOWN:
+                    self.move_direction.y -= 1
+                    print('[MOVING] Stopping Down')
+
+                # Обновить текстурку с новым направлением движения
+                self.update_texture()
+
+        # Нормализовать движение (чтобы пакман по горизонтали двигался с той же скоростью)
+        if (self.move_direction != Vector2()):
+            movement_normalized = self.move_direction.normalize()
+            self.velocity.x = movement_normalized.x * self.speed
+            self.velocity.y = movement_normalized.y * self.speed
         else:
-            self.open_havalka_timer = False
+            self.velocity = Vector2()
 
+    def update_texture(self):
+        if (self.move_direction.x > 0):
+            self.texture = pygame.image.load("images/pacman_right.png")
 
+        elif (self.move_direction.x < 0):
+            self.texture = pygame.image.load("images/pacman_left.png")
 
-    def move(self):
+        elif (self.move_direction.y > 0):
+            self.texture = pygame.image.load("images/pacman_down.png")
 
-        dirs = ['left', 'right', 'up', 'down']
-
-        if (self.is_moving):
-
-            if (self.move_dir == dirs[0]):
-
-               self.rect.move_ip(self.speed['speed_l'], 0)
-               self.cur_move_sprite = pygame.image.load("images/pacman_left.png")
-
-            elif (self.move_dir == dirs[1]):
-
-                self.rect.move_ip(self.speed['speed_r'], 0)
-                self.cur_move_sprite = pygame.image.load("images/pacman_right.png")
-
-            elif (self.move_dir == dirs[2]):
-
-                self.rect.move_ip(0, self.speed['speed_u'])
-                self.cur_move_sprite = pygame.image.load("images/pacman_top.png")
-
-            elif (self.move_dir == dirs[3]):
-
-                self.rect.move_ip(0, self.speed['speed_d'])
-                self.cur_move_sprite = pygame.image.load("images/pacman_down.png")
-
-
-    def logic(self, *all_obj, field, score):
-
-        st = self.collision(*all_obj)
-        list_of_all_object_groups = list(all_obj)
-
-        #print(st[0])
-        if (st[0]):
-
-            if (st[0] == 'left'):
-                self.rect.move_ip(-self.conspeed, 0)
-                self.speed['speed_r'] = 0
-                #self.rect.x += 1
-
-            elif (st[0] == 'right'):
-                self.rect.move_ip(self.conspeed, 0)
-                self.speed['speed_l'] = 0
-                #self.rect.x -= 1
-
-            elif (st[0] == 'top'):
-                self.rect.move_ip(0, self.conspeed)
-                self.speed['speed_u'] = 0
-                #self.rect.y += 1
-
-            elif (st[0] == 'bottom'):
-                self.rect.move_ip(0, -self.conspeed)
-                self.speed['speed_d'] = 0
-                #self.rect.y -= 1
+        elif (self.move_direction.y < 0):
+            self.texture = pygame.image.load("images/pacman_top.png")
 
         else:
-            self.set_speed(self.conspeed)
+            self.texture = pygame.image.load("images/pacman_circle.png")
 
-        # Просто ест семена всех типов, для начисление балов или эфектов будем проверять коллизию пакмана с семенем в классе семян.
-        #pygame.sprite.spritecollide(self, list_of_all_object_groups[1], True)
-        # на всякий случай
-        self.mask = pygame.mask.from_surface(self.image)
-        for seed in list_of_all_object_groups[1]:
-            if (pygame.sprite.collide_mask(self, seed)):
-                list_of_all_object_groups[1].remove(seed)
-                self.earn_points(score, seed)
-
-
-        if (len(st[1]) != 0):
-            self.rect.x = pac_spawnx
-            self.rect.y = pac_spawny
-            self.hp -= 1
-
-
-        # Невозможность повернуть в стену
-
-
-
-    def change(self):
-
-        if (self.open_havalka_timer):
+    def update_texture_timer(self):
+        if self.open_havalka_timer:
             self.time += self.clock.tick_busy_loop(60)
-            #print(self.time)
-            if (self.time > 300):
-                #print(self.change_sprite)
 
-                if (self.change_sprite > 0):
-                    self.image = pygame.image.load("images/pacman_circle.png")
-                    #print('circle')
+            if self.time > 300:
+                if self.change_sprite > 0:
+                    self.texture = pygame.image.load("images/pacman_circle.png")
 
-                elif (self.change_sprite < 0):
-                    #print('nope')
-                    self.image = self.cur_move_sprite
+                elif self.change_sprite < 0:
+                    self.update_texture()
 
                 self.change_sprite *= -1
                 self.time = 0
 
-
-    def check_events(self, event):
-
-        if (event.type == pygame.KEYDOWN):
-
-            if (event.key == pygame.K_RIGHT):
-                self.set_movement(True, 'right')
-
-            elif (event.key == pygame.K_LEFT):
-                self.set_movement(True, 'left')
-
-            elif (event.key == pygame.K_UP):
-                self.set_movement(True, 'up')
-
-            elif (event.key == pygame.K_DOWN):
-                self.set_movement(True, 'down')
-
-
-    def earn_points(self, cur_score, seed):
-        self.sc = cur_score + seed.weight
-
-    def update(self, event_field_score, *args):
-
-        event = event_field_score[0]
-        field = event_field_score[1]
-        #score = event_field_score[2]
-
-        if(event != None):
-            self.check_events(event)
-
-        if (self.is_moving):
-            self.move()
-
-        self.change()
-        self.logic(*args, field=field, score=event_field_score[2])
-
-        #print(self.hp)
-        if (self.hp <= 0):
-            return True
-
-        return False
+    def draw(self, screen):
+        super().draw(screen)
