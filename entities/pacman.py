@@ -5,8 +5,8 @@ from firstpacman.constants import *
 from pygame import Vector2
 
 class Pacman(movingObject):
-    def init(self, speed, position):
-        super().init(texture=pygame.image.load("images/pacman_circle.png"), speed=speed, position=position)
+    def __init__(self, speed, position):
+        super().__init__(texture=pygame.image.load("images/pacman_circle.png"), speed=speed, position=position)
         self.move_direction = Vector2()
 
         self.clock = pygame.time.Clock()
