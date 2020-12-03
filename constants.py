@@ -1,4 +1,3 @@
-
 dims = height, width = 1024, 680
 black = (0, 0, 0)
 button_color = (255, 255, 255)

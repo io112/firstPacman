@@ -1,5 +1,4 @@
 import pygame
-
 from firstpacman.entities.movingObject import movingObject
 from firstpacman.constants import *
 
@@ -18,6 +17,13 @@ class Pacman(movingObject):
         self.dead = False
         self.score = 0
         self.hp = 3
+
+        # Саунды пакмана. -- Егор
+        self.init_sound = pygame.mixer.Sound("sounds/pacman_beginning.wav")
+        self.havalka_sound = pygame.mixer.Sound("sounds/pacman_chomp.wav")
+        self.eatfruit_sound = pygame.mixer.Sound("sounds/pacman_eatfruit.wav")
+        self.eatghost_sound = pygame.mixer.Sound("sounds/pacman_eatghost.wav")
+        self.death_sound = pygame.mixer.Sound("sounds/pacman_death.wav")
 
     def update(self, seeds, ghosts, field, events):
         # Движение
