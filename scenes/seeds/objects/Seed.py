@@ -19,6 +19,10 @@ class Seed(Object):
         self.rect.x = field_x * (field.CELL_ACTUAL_SIZE) + field.CELL_ACTUAL_SIZE / 2 - basic_seed.get_rect().height / 2 - 1
         self.rect.y = field_y * (field.CELL_ACTUAL_SIZE) + field.CELL_ACTUAL_SIZE / 2 - basic_seed.get_rect().height / 2 - 1
 
+    def reset_coords(self, Seed_):
+        self.rect.x = Seed_.rect.x
+        self.rect.y = Seed_.rect.y
+
     def get_type(self):
         return self.type  # возвращает тип съеденого. на будущее, для возможности есть привидений
 

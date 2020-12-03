@@ -80,13 +80,25 @@ class Menu(Activity):
         ghosts.add(red_ghost)
 
         seeds = pygame.sprite.Group()
+        fruit_added = False
 
         font = pygame.font.Font('images/Comfortaa-SemiBold.ttf', 18)
 
-        for rect in main_field.get_all_seeds_coords():
+        for rect in main_field.get_all_seeds_coords():  # генерация зерен
             # print(rect)
             seed = Seed(screen, seeds)
             seed.set_coords(rect.x, rect.y, main_field)
+
+        for seed in range(4):  # генерация особых зерен
+            rnd_seed = random.choice(seeds.sprites())
+            b_seed = BigSeed(screen, seeds)
+            b_seed.reset_coords(rnd_seed)
+            rnd_seed.kill()
+
+        # rnd_seed = random.choice(seeds.sprites()) #генерация фрукта при старте
+        # fruit = Fruit(screen, seeds)
+        # fruit.reset_coords(rnd_seed)
+        # rnd_seed.kill()
 
         # GAME LOOP
         gameover = False
@@ -95,7 +107,8 @@ class Menu(Activity):
         while not gameover_by_button and not gameover:
             for event in pygame.event.get():
 
-                gameover = pacman.update([event, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts, pacman)
+                gameover = pacman.update([event, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts,
+                                         pacman)
 
                 if event.type == pygame.QUIT:
                     gameover_by_button = True
@@ -112,8 +125,15 @@ class Menu(Activity):
 
             # Если hp == 0 пакман, сразу завершаем игру (или вызываем обработку конца, имеется ввиду обновление списка рекордов
             gameover = pacman.update([None, main_field, score], main_field.get_all_wall_rects(), seeds, ghosts, pacman)
-            score = pacman.sc       # В python как то геморно передовать переменную по ссылке, поэтому в пакмане хранится счет
-            
+            score = pacman.sc  # В python как то геморно передовать переменную по ссылке, поэтому в пакмане хранится счет
+
+            if score >= 100 and not fruit_added:  # генерация фрукта при достижении очков
+                rnd_seed = random.choice(seeds.sprites())
+                fruit = Fruit(screen, seeds)
+                fruit.reset_coords(rnd_seed)
+                rnd_seed.kill()
+                fruit_added = True
+
             blue_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
             red_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
             green_ghost.update(main_field, main_field.get_all_wall_rects(), seeds, ghosts, pacman)
@@ -130,7 +150,7 @@ class Menu(Activity):
             screen.blit(text, textRect)
 
             pygame.display.flip()
-            pygame.time.wait(10)        
+            pygame.time.wait(10)
 
         with open('records.txt', 'a') as f:
             f.write(str(score))
