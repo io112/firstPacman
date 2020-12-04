@@ -10,7 +10,7 @@ class Field:
         self.CELL_SIZE = 8
         self.CELL_SCALE = 4
         self.CELL_ACTUAL_SIZE = self.CELL_SIZE * self.CELL_SCALE
-        self.tileset_image = pygame.image.load("images/tileset.png").convert()
+        self.tileset_image = pygame.image.load("images/tileset_dark.png").convert()
         self.tileset_rect = self.tileset_image.get_rect()
         self.screen = screen
 

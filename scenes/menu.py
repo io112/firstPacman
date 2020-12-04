@@ -1,4 +1,3 @@
-#region Imports
 # Основы
 import pygame
 from pygame import Vector2
@@ -18,9 +17,11 @@ from firstpacman.scenes.seeds.objects.fruit import *
 
 # Энтити
 from firstpacman.entities.pacman import Pacman
+from firstpacman.entities.ghosts.pinkyGhost import Pinky
+from firstpacman.entities.ghosts.inkyGhost import Inky
+from firstpacman.entities.ghosts.blinkyGhost import Blinky
 from firstpacman.entities.ghosts.clydeGhost import Clyde
 from firstpacman.entities.ghosts.ghostBase import GhostBase
-#endregion
 
 class Menu(Activity):
     def __init__(self, game):
@@ -61,10 +62,10 @@ class Menu(Activity):
 
         ghosts = []
 
-        clyde_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
-        inky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
-        pinky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
-        blinky_ghost = Clyde(speed=2, spawn_position=Vector2(blue_spawnx, blue_spawny))
+        clyde_ghost = Clyde(speed=2, spawn_position=Vector2(clyde_spawnx, clyde_spawny))
+        inky_ghost = Inky(speed=2, spawn_position=Vector2(inky_spawnx, inky_spawny))
+        pinky_ghost = Pinky(speed=2, spawn_position=Vector2(pinky_spawnx, pinky_spawny))
+        blinky_ghost = Blinky(speed=2, spawn_position=Vector2(blinky_spawnx, blinky_spawny))
         ghosts.append(clyde_ghost)
         ghosts.append(inky_ghost)
         ghosts.append(pinky_ghost)
@@ -94,6 +95,11 @@ class Menu(Activity):
             for event in events:
                 if event.type == pygame.QUIT:
                     gameover = True
+
+                # Не работает потому што питон бяка
+                if event.type == pygame.KEYDOWN:
+                    if event.key == pygame.K_F1:
+                        self.DEBUG_MODE = True
 
             text = font.render(str(score), True, (255, 46, 66))
             textRect = text.get_rect()
