@@ -24,5 +24,4 @@ class Button:
 
     # update is called every time in a loop
     def update(self):
-        self.screen.fill(black, self.rect)
         self.screen.blit(self.pict, self.rect)

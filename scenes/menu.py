@@ -2,6 +2,7 @@
 import pygame
 from pygame import Vector2
 from firstpacman.constants import *
+import firstpacman.debuger as debuger
 
 # Меню
 from firstpacman.third_party.button.button import Button
@@ -17,11 +18,8 @@ from firstpacman.scenes.seeds.objects.fruit import *
 
 # Энтити
 from firstpacman.entities.pacman import Pacman
-from firstpacman.entities.ghosts.pinkyGhost import Pinky
-from firstpacman.entities.ghosts.inkyGhost import Inky
-from firstpacman.entities.ghosts.blinkyGhost import Blinky
-from firstpacman.entities.ghosts.clydeGhost import Clyde
-from firstpacman.entities.ghosts.ghostBase import GhostBase
+from firstpacman.entities.ghosts.targetGhost import TargetGhost
+from firstpacman.entities.ghosts.wonderingGhost import WonderingGhost
 
 class Menu(Activity):
     def __init__(self, game):
@@ -52,25 +50,25 @@ class Menu(Activity):
     def to_game(self):
         score = 0
         screen = pygame.display.set_mode(screen_dims)
+        debuger.debuger = debuger.Debuger()
 
         # INIT
         main_field = Field(screen)
         main_field.init_field()
         # print(main_field.get_all_wall_rects())
 
-        pacman = Pacman(speed=2, position=Vector2(pac_spawnx, pac_spawny))
+        clyde_ghost = WonderingGhost(texture=pygame.image.load("images/orange_ghost.png"), speed=3, spawn_position=Vector2(clyde_spawnx, clyde_spawny))
+        inky_ghost = WonderingGhost(texture=pygame.image.load("images/blue_ghost.png"), speed=3, spawn_position=Vector2(inky_spawnx, inky_spawny))
+        pinky_ghost = TargetGhost(texture=pygame.image.load("images/purple_ghost.png"), speed=1, spawn_position=Vector2(pinky_spawnx, pinky_spawny), field=main_field)
+        blinky_ghost = TargetGhost(texture=pygame.image.load("images/red_ghost.png"), speed=2, spawn_position=Vector2(blinky_spawnx, blinky_spawny), field=main_field)
 
         ghosts = []
-
-        clyde_ghost = Clyde(speed=2, spawn_position=Vector2(clyde_spawnx, clyde_spawny))
-        inky_ghost = Inky(speed=2, spawn_position=Vector2(inky_spawnx, inky_spawny))
-        pinky_ghost = Pinky(speed=2, spawn_position=Vector2(pinky_spawnx, pinky_spawny))
-        blinky_ghost = Blinky(speed=2, spawn_position=Vector2(blinky_spawnx, blinky_spawny))
         ghosts.append(clyde_ghost)
         ghosts.append(inky_ghost)
         ghosts.append(pinky_ghost)
         ghosts.append(blinky_ghost)
-        print(ghosts)
+
+        pacman = Pacman(speed=2, position=Vector2(pac_spawnx, pac_spawny), ghosts=ghosts)
 
         seeds = pygame.sprite.Group()
         fruit_added = False
@@ -89,6 +87,7 @@ class Menu(Activity):
             rnd_seed.kill()
 
         # GAME LOOP
+        score = 0
         gameover = False
         while not gameover and not pacman.dead:
             events = pygame.event.get()
@@ -96,17 +95,14 @@ class Menu(Activity):
                 if event.type == pygame.QUIT:
                     gameover = True
 
-                # Не работает потому што питон бяка
                 if event.type == pygame.KEYDOWN:
                     if event.key == pygame.K_F1:
-                        self.DEBUG_MODE = True
+                        debuger.DEBUG_MODE = not debuger.DEBUG_MODE
 
             text = font.render(str(score), True, (255, 46, 66))
             textRect = text.get_rect()
             textRect.x = 8
             textRect.y = 8
-
-            score = 0
 
             if score >= 100 and not fruit_added:  # генерация фрукта при достижении очков
                 rnd_seed = random.choice(seeds.sprites())
@@ -131,6 +127,8 @@ class Menu(Activity):
                 ghost.draw(screen)
             pacman.draw(screen)
 
+            debuger.debuger.draw(screen)
+
             screen.blit(text, textRect)
 
             pygame.display.flip()
@@ -150,7 +148,7 @@ class Menu(Activity):
         self.game.scenes[self.game.SCENE_STATS].on_activate()
 
     def update(self, events):
-        self.screen.fill(black)
+        self.screen.fill(bg_col)
         for button in self.buttons:
             button.update()
         for event in events:

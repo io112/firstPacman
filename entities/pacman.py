@@ -5,7 +5,7 @@ from firstpacman.entities.movingObject import movingObject
 from firstpacman.constants import *
 
 class Pacman(movingObject):
-    def __init__(self, speed, position):
+    def __init__(self, speed, position, ghosts):
         super().__init__(texture=pygame.image.load("images/pacman_circle.png"), speed=speed, position=position)
         self.move_direction = Vector2()
 
@@ -13,6 +13,7 @@ class Pacman(movingObject):
         self.open_havalka_timer = True
         self.time = 0
         self.change_sprite = -1
+        self.ghosts = ghosts
 
         self.dead = False
         self.score = 0
@@ -47,6 +48,8 @@ class Pacman(movingObject):
         for seed in seeds:
             if pygame.sprite.collide_mask(self, seed):
                 seeds.remove(seed)
+                if seed.weight == 100:
+                    self.scare_ghost()
                 self.earn_points(seed)
 
     # Призраки
@@ -163,7 +166,14 @@ class Pacman(movingObject):
 
     # Вспомогательные
     def die(self):
+        # Телепортировать всех на свои места
         self.position = Vector2(pac_spawnx, pac_spawny)
+
+        self.ghosts[0].position = Vector2(clyde_spawnx, clyde_spawny)
+        self.ghosts[1].position = Vector2(inky_spawnx, inky_spawny)
+        self.ghosts[2].position = Vector2(pinky_spawnx, pinky_spawny)
+        self.ghosts[3].position = Vector2(blinky_spawnx, blinky_spawny)
+
         self.hp -= 1
 
         # Если у пакмана 0 жизней, то он мертв (логично)
@@ -175,6 +185,9 @@ class Pacman(movingObject):
         self.eatfruit_sound.play()
         self.score = self.score + seed.weight
 
-
     def draw(self, screen):
         super().draw(screen)
+
+    def scare_ghost(self):
+        for ghost in self.ghosts:
+            ghost.vulnurable = True

@@ -1,7 +1,8 @@
 import random, pygame, pygame.locals
 from firstpacman.scenes.walls import *
 from firstpacman.constants import *
-from pygame import Rect
+import firstpacman.debuger as global_vars
+from pygame import Rect, Vector2
 
 class Field:
     def __init__(self, screen):
@@ -24,7 +25,7 @@ class Field:
 
         self.field = []
 
-    def update():
+    def update(self):
         pass
 
     def init_field(self):
@@ -67,8 +68,28 @@ class Field:
             for j in range(self.FIELD_WEIGHT):
                 print(int(self.field[i][j]), end='')
             print('\n')
-    def get_tile_world_coords(self, x, y):
-        return [(x - 2) * self.CELL_ACTUAL_SIZE, (y - 2) * self.CELL_ACTUAL_SIZE]
+
+    def get_pathfinding_matrix(self):
+        matrix = []
+        for y in range(self.FIELD_WIDTH + 2):
+            row = []
+            for x in range(self.FIELD_HEIGHT + 2):
+                if self.field[x][y]:
+                    row.append(0)
+                else:
+                    row.append(random.randint(1, 10))
+            matrix.append(row)
+        return matrix
+
+    def get_tile_from_point(self, x, y):
+        field_coords = self.get_field_coords_from_point(x, y)
+        return Rect(self.get_point_from_field_coords(field_coords.x, field_coords.y), (self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
+
+    def get_point_from_field_coords(self, x, y):
+        return Vector2(round((x - 2) * self.CELL_ACTUAL_SIZE), round((y - 2) * self.CELL_ACTUAL_SIZE))
+
+    def get_field_coords_from_point(self, x, y):
+        return Vector2(round(x / self.CELL_ACTUAL_SIZE) + 2, round(y / self.CELL_ACTUAL_SIZE) + 2)
 
     def get_all_seeds_coords(self):
         rects = []
@@ -78,7 +99,7 @@ class Field:
                     rects.append(Rect((x - 2), (y - 2), self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
         return rects
 
-    def check_tile(self, x, y):
+    def check_tile_in_world(self, x, y):
         if self.field[int((x + 2) / self.CELL_ACTUAL_SIZE)][int((y + 2) / self.CELL_ACTUAL_SIZE)]:
             return True
         else:
@@ -103,13 +124,13 @@ class Field:
                     texture = pygame.transform.scale(texture, (self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
                     screen.blit(texture, (pos_x, pos_y, self.CELL_ACTUAL_SIZE, self.CELL_ACTUAL_SIZE))
 
-        if DEBUG_MODE:
+        if global_vars.DEBUG_MODE:
             self.draw_hitboxes(screen)
 
     def draw_hitboxes(self, screen):
         rects = self.get_all_wall_rects()
         for rect in rects:
-            pygame.draw.rect(self.screen, HITBOX_COLOR, rect, 1)
+            pygame.draw.rect(self.screen, global_vars.HITBOX_COLOR, rect, 1)
 
     def get_tile(self, x, y):
 

@@ -1,6 +1,7 @@
 from pygame import Vector2
 import pygame
 from firstpacman.constants import *
+import firstpacman.debuger as debuger
 
 class movingObject():
 
@@ -43,6 +44,21 @@ class movingObject():
 
         elif (self.position.y > screen_width):
             self.position.y = -self.rect.height
+
+    def is_out_of_screen(self):
+        if (self.position.x + self.rect.width <= 0):
+            return True
+
+        elif (self.position.x > screen_height):
+            return True
+
+        if (self.position.y + self.rect.height <= 0):
+            return True
+
+        elif (self.position.y > screen_width):
+            return True
+
+        return False
 
     def check_collisions(self, field):
         colliding_dirs = self.get_walls_collisions(field.get_all_wall_rects())
@@ -103,12 +119,12 @@ class movingObject():
     def draw(self, screen):
         screen.blit(self.texture, (self.position.x, self.position.y))
 
-        if DEBUG_MODE:
+        if debuger.DEBUG_MODE:
             self.draw_hitbox(screen)
             self.draw_velocity_vector(screen)
 
     def draw_hitbox(self, screen):
-        pygame.draw.rect(screen, HITBOX_COLOR, self.rect, 1)
+        pygame.draw.rect(screen, debuger.HITBOX_COLOR, self.rect, 1)
 
     def draw_velocity_vector(self, screen):
-        pygame.draw.line(screen, VELOCITY_COLOR, self.get_center(), self.get_center() + self.velocity * VELOCITY_SCALE, 2)
+        pygame.draw.line(screen, debuger.VELOCITY_COLOR, self.get_center(), self.get_center() + self.velocity * debuger.VELOCITY_SCALE, 2)
