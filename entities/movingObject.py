@@ -6,6 +6,7 @@ class movingObject():
 
     def __init__(self, texture, speed, position=Vector2()):
         self.texture = texture
+        self.mask = pygame.mask.from_surface(self.texture)
 
         self.speed = speed
         self.colliding = False
@@ -44,7 +45,7 @@ class movingObject():
             self.position.y = -self.rect.height
 
     def check_collisions(self, field):
-        colliding_dirs = self.walls_collision(field.get_all_wall_rects())
+        colliding_dirs = self.get_walls_collisions(field.get_all_wall_rects())
 
         # Если нет коллизий, то просто return
         if (colliding_dirs == []):
@@ -58,7 +59,7 @@ class movingObject():
         if ((colliding_dirs.__contains__('bottom')) or (colliding_dirs.__contains__('top'))):
             self.velocity.y = 0
 
-    def walls_collision(self, list_of_walls):
+    def get_walls_collisions(self, list_of_walls):
         collides_with = []
 
         # Пробегает по всем стенам и проверяет с ними коллизии

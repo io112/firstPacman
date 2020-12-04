@@ -1,9 +1,10 @@
+import pygame
+
 from constants import *
 from scenes.seeds.objects.Seed import *
 from scenes.seeds.objects.Fruit import *
 from entities.pacman import Pacman
 from entities.pinky import Pinky
-
 
 def main():
     # PYGAME INIT
@@ -71,6 +72,11 @@ def main():
 
             if event.type == pygame.QUIT:
                 gameover_by_button = True
+
+            if event.type == pygame.KEYDOWN:
+                if event.key == pygame.K_COMMA:
+                    print('JOPA')
+                    DEBUG_MODE = True
 
         # block init_seeds_field started
 

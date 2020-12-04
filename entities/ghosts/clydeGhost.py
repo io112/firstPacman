@@ -1,6 +1,7 @@
-from firstpacman.entities.ghosts.ghostBase import GhostBase
 import pygame
 from pygame import Vector2
+
+from firstpacman.entities.ghosts.ghostBase import GhostBase
 
 class Clyde(GhostBase):
     def __init__(self, speed, spawn_position):

@@ -1,8 +1,8 @@
 import pygame
+from pygame import Vector2
+
 from firstpacman.entities.movingObject import movingObject
 from firstpacman.constants import *
-
-from pygame import Vector2
 
 class Pacman(movingObject):
     def __init__(self, speed, position):
@@ -24,6 +24,8 @@ class Pacman(movingObject):
         self.eatfruit_sound = pygame.mixer.Sound("sounds/pacman_eatfruit.wav")
         self.eatghost_sound = pygame.mixer.Sound("sounds/pacman_eatghost.wav")
         self.death_sound = pygame.mixer.Sound("sounds/pacman_death.wav")
+
+        self.init_sound.play()
 
     def update(self, seeds, ghosts, field, events):
         # Движение
@@ -56,7 +58,7 @@ class Pacman(movingObject):
     def check_ghosts_collision(self, ghosts):
         for ghost in ghosts:
             # Я нашел это в интернете, но оно работает
-            ghost_mask = pygame.mask.from_surface(ghost.texture)
+            ghost_mask = ghost.mask
             offset_x = int(ghost.position.x - self.position.x)
             offset_y = int(ghost.position.y - self.position.y)
             if self.mask.overlap(ghost_mask, (offset_x, offset_y)):
@@ -147,6 +149,7 @@ class Pacman(movingObject):
             self.time += self.clock.tick_busy_loop(60)
 
             if self.time > 300:
+                # self.havalka_sound.play()
                 if self.change_sprite > 0:
                     self.texture = pygame.image.load("images/pacman_circle.png")
                     # Обновить маску, так как мы поменяли текстурку
@@ -165,10 +168,11 @@ class Pacman(movingObject):
 
         # Если у пакмана 0 жизней, то он мертв (логично)
         if self.hp <= 0:
+            self.death_sound.play()
             self.dead = True
 
     def earn_points(self, seed):
-        # self.eatfruit_sound.play()
+        self.eatfruit_sound.play()
         self.score = self.score + seed.weight
 
 
