@@ -1,6 +1,7 @@
 import sys
 import pygame
 from firstpacman.game import Game
+import pathfinding
 
 
 def main():
