@@ -3,6 +3,7 @@ import pygame
 from pygame import Vector2
 from firstpacman.constants import *
 import firstpacman.debuger as debuger
+from firstpacman.third_party.player.player import Player
 
 # Меню
 from firstpacman.third_party.button.button import Button
@@ -24,6 +25,8 @@ from firstpacman.entities.ghosts.wonderingGhost import WonderingGhost
 class Menu(Activity):
     def __init__(self, game):
         super(Menu, self).__init__(game)
+        self.player = Player()
+
 
     def on_activate(self):
         self.inflate_buttons()
@@ -115,6 +118,9 @@ class Menu(Activity):
             pacman.update(seeds=seeds, ghosts=ghosts, field=main_field, events=events)
             score = pacman.score
 
+            self.player.stop_menu_sound()
+            self.player.play_game_sound()
+
             for ghost in ghosts:
                 ghost.update(field=main_field, pacman=pacman)
 
@@ -148,6 +154,8 @@ class Menu(Activity):
         self.game.scenes[self.game.SCENE_STATS].on_activate()
 
     def update(self, events):
+        self.player.stop_game_sound()
+        self.player.play_menu_sound()
         self.screen.fill(bg_col)
         for button in self.buttons:
             button.update()
