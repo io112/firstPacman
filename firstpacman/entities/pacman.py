@@ -174,6 +174,11 @@ class Pacman(movingObject):
         self.ghosts[2].position = Vector2(pinky_spawnx, pinky_spawny)
         self.ghosts[3].position = Vector2(blinky_spawnx, blinky_spawny)
 
+        self.ghosts[0].target = self.ghosts[0].position
+        self.ghosts[1].target = self.ghosts[1].position
+        self.ghosts[2].target = self.ghosts[2].position
+        self.ghosts[3].target = self.ghosts[3].position
+
         self.hp -= 1
 
         # Если у пакмана 0 жизней, то он мертв (логично)
